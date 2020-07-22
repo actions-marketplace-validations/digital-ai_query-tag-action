@@ -4,6 +4,8 @@ A GitHub Action allowing users to query tags via `git describe --tags`.
 
 This is useful, for example, if you want to generate a changelog from your last release tag to your newest. Rather than apply that logic to multiple changelog tools, this action will set an output parameter to the last found tag. You should then be able to use that parameter in any changelog utility you'd like.
 
+This action can also be used to detect if HEAD is tagged. This could be used in a nightly build action which creates a tag to recognize when no changes have been made since the last tag.
+
 This action acts as a wrapper around [`git describe --tags`](https://git-scm.com/docs/git-describe), performing an `unshallow` operation on the git repository by default.
 
 The `actions/checkout@v2` action will check out a shallow repository. Although that action's [readme](https://github.com/actions/checkout) documents how to unshallow, many users will never read that readme. For those savvy users who are already performing an unshallow, you may skip that operation in this action by passing the input `skip-unshallow: "true"`.
@@ -66,11 +68,6 @@ The text to return if `git describe` does not find any tags. This can then be us
 The tag determined by your inputs or the value of the `no-tags-text` option.
 
 ## Example usage
-
-uses: digital-ai/query-tag-action@v1
-with:
-  who-to-greet: 'Mona the Octocat'
-
 
 ```yaml
 name: Tagged
