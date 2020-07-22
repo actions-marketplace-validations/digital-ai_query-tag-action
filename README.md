@@ -8,6 +8,8 @@ This action acts as a wrapper around [`git describe --tags`](https://git-scm.com
 
 The `actions/checkout@v2` action will check out a shallow repository. Although that action's [readme](https://github.com/actions/checkout) documents how to unshallow, many users will never read that readme. For those savvy users who are already performing an unshallow, you may skip that operation in this action by passing the input `skip-unshallow: "true"`.
 
+**FORK NOTES** - this version removes the use of `--abbrev=0` from the `git describe` command so that we can determine if the tag points to an older sha.
+
 ## Inputs
 
 ### `include`
@@ -51,7 +53,7 @@ The tag determined by your inputs.
 
 ## Example usage
 
-uses: jimschubert/query-tag-action@v1
+uses: digital-ai/query-tag-action@v1
 with:
   who-to-greet: 'Mona the Octocat'
 
@@ -93,7 +95,7 @@ No automated tests are provided here because this action just builds a standard 
 The example from above will produce the following command:
 
 ```bash
-git fetch --prune --unshallow && git describe --tags --abbrev=0 --match 'v*' --exclude '*-rc*' HEAD~
+git fetch --prune --unshallow && git describe --tags ---match 'v*' --exclude '*-rc*' HEAD~
 ```
 
 The above command is built by the following parts:
