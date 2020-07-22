@@ -1,6 +1,6 @@
-name: 'Query Tag'
-description: 'Queries for a git tag using git describe'
-author: 'Jim Schubert'
+name: 'Query Tag Full Output'
+description: 'Queries for a git tag using git describe --tags'
+author: 'Mark Phippard'
 inputs:
   include:
     description: 'Glob pattern of tags to include'
@@ -25,4 +25,4 @@ runs:
   main: 'main.js'
 branding:
   icon: 'hash'  
-  color: 'green'
+  color: 'blue'
