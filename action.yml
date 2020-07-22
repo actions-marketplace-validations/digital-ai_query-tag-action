@@ -1,4 +1,4 @@
-name: 'Query Tag Full Output'
+name: 'Check for Tag'
 description: 'Queries for a git tag using git describe --tags'
 author: 'Mark Phippard'
 inputs:
