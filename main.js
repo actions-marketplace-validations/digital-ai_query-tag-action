@@ -33,16 +33,13 @@ try {
     }
 
     if (typeof commitIsh === 'string') {
-        if (commitIsh === '' || commitIsh === 'HEAD') {
-            console.warn('Passing empty string or HEAD to commit-ish will get the "current" tag rather than "previous". For previous tag, try "HEAD~".');
-        }
         commitIshOption = `'${commitIsh}'`;
     }
 
     var unshallowCmd = skipUnshallow ? '' : 'git fetch --prune --unshallow &&'
 
     // actions@checkout performs a shallow checkout. Need to unshallow for full tags access.
-    var cmd = `${unshallowCmd} git describe --tags --abbrev=0 ${includeOption} ${excludeOption} ${commitIshOption}`.replace(/[ ]+/, ' ').trim();
+    var cmd = `${unshallowCmd} git describe --tags ${includeOption} ${excludeOption} ${commitIshOption}`.replace(/[ ]+/, ' ').trim();
     console.log(`Executing: ${cmd}`);
 
     exec(cmd, (err, tag, stderr) => {
