@@ -8,8 +8,6 @@ This action acts as a wrapper around [`git describe --tags`](https://git-scm.com
 
 The `actions/checkout@v2` action will check out a shallow repository. Although that action's [readme](https://github.com/actions/checkout) documents how to unshallow, many users will never read that readme. For those savvy users who are already performing an unshallow, you may skip that operation in this action by passing the input `skip-unshallow: "true"`.
 
-**FORK NOTES** - this version removes the use of `--abbrev=0` from the `git describe` command so that we can determine if the tag points to an older sha.
-
 ## Inputs
 
 ### `include`
@@ -45,11 +43,27 @@ This option allows for users who have already performed an unshallow operation t
 
 **NOTE** If you have already performed an unshallow in a previous step, you must pass `skip-unshallow: "true"` in any `query-tag-action` step following that unshallow. A future version may check and handle this logic gracefully without user input.
 
+### `exact-match`
+
+**Optional** Only output exact matches: "true" or "false"
+
+Default: `false`
+
+This option adds the `--exact-match` option to the command which can be useful if you want to see if a tag exists.
+
+### `no-tags-text`
+
+**Optional** Text to output if no tags were found
+
+Default: `NO_TAGS`
+
+The text to return if `git describe` does not find any tags. This can then be used in an `if condition` on subsequent steps.
+
 ## Outputs
 
 ### `tag`
 
-The tag determined by your inputs.
+The tag determined by your inputs or the value of the `no-tags-text` option.
 
 ## Example usage
 
@@ -75,11 +89,12 @@ jobs:
     #   run: git fetch --prune --unshallow
     - name: Find Tag
       id: tagger
-      uses: jimschubert/query-tag-action@v1
+      uses: digital-ai/query-tag-action@v2
       with:
         include: 'v*'
         exclude: '*-rc*'
-        commit-ish: 'HEAD~'
+        commit-ish: 'HEAD'
+        exact-match: 'true'
         # if you unshallow in a separate step, use the following option:
         # skip-unshallow: 'true'
     - name: Show Tag
@@ -95,7 +110,7 @@ No automated tests are provided here because this action just builds a standard 
 The example from above will produce the following command:
 
 ```bash
-git fetch --prune --unshallow && git describe --tags ---match 'v*' --exclude '*-rc*' HEAD~
+git fetch --prune --unshallow && git describe --tags --abbrev=0 ---match 'v*' --exclude '*-rc*' --exact-match HEAD
 ```
 
 The above command is built by the following parts:
@@ -103,7 +118,8 @@ The above command is built by the following parts:
 * `skip-unshallow` determines whether to include the `git fetch --prune --unshallow && ` command part
 * `include` determines whether to generate `--match` and defines the value `v*`
 * `exclude` determines whether to generate `--exclude` and defines the value `*-rc*`
-* `commit-ish` determines whether to generate the command option `HEAD~`.
+* `commit-ish` determines whether to generate the command option `HEAD`.
+* `exact-match` determined whether to generate `--exact-match`.
 
 Please see [tagged.yml](./.github/workflows/tagged.yml) for some use cases.
 

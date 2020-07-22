@@ -19,10 +19,13 @@ try {
     const exclude = getInput('exclude');
     const commitIsh = getInput('commit-ish');
     const skipUnshallow = getInput('skip-unshallow') === 'true';
+    const exactMatch = getInput('exact-match') === 'true';
+    const noTagText = getInput('no-tags-text');
 
     var includeOption = '';
     var excludeOption = '';
     var commitIshOption = '';
+    var noTagTextOption = 'NO_TAGS';
 
     if (typeof include === 'string' && include.length > 0) {
         includeOption = `--match '${include}'`;
@@ -36,16 +39,22 @@ try {
         commitIshOption = `'${commitIsh}'`;
     }
 
+    if (typeof noTagText === 'string') {
+        noTagTextOption = `'${noTagText}'`;
+    }
+
     var unshallowCmd = skipUnshallow ? '' : 'git fetch --prune --unshallow &&'
+    var exactMatchOption = exactMatch ? '--exact-match' : ''
 
     // actions@checkout performs a shallow checkout. Need to unshallow for full tags access.
-    var cmd = `${unshallowCmd} git describe --tags ${includeOption} ${excludeOption} ${commitIshOption}`.replace(/[ ]+/, ' ').trim();
+    var cmd = `${unshallowCmd} git describe --tags --abbrev=0 ${includeOption} ${excludeOption} ${exactMatchOption} ${commitIshOption}`.replace(/[ ]+/, ' ').trim();
     console.log(`Executing: ${cmd}`);
 
     exec(cmd, (err, tag, stderr) => {
         if (err) {
-            console.error(`Unable to find an earlier tag.\n${stderr}`);
-            return process.exit(1);
+            console.log(`Unable to find an earlier tag.\n${stderr}`);
+            console.log(`Outputting tag: ${noTagTextOption}`)
+            return setOutput('tag', noTagTextOption.trim());
         }
         console.log(`Outputting tag: ${tag.trim()}`)
         return setOutput('tag', tag.trim());

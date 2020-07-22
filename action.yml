@@ -17,9 +17,17 @@ inputs:
     description: 'Skip the unshallow operation: "true" or "false"'
     required: false
     default: 'false'
+  exact-match:
+    description: 'Only output exact matches: "true" or "false"'
+    required: false
+    default: 'false'
+  no-tags-text:
+    description: 'Text to output if no tags were found'
+    required: false
+    default: 'NO_TAGS'
 outputs:
   tag:
-    description: 'The found tag'
+    description: 'The found tag or the value of no-tags-text'
 runs:
   using: 'node12'
   main: 'main.js'
